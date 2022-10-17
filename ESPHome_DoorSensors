@@ -1,0 +1,48 @@
+Warning: YMMV if running HA on an RPI 3B+ or less. I had one, and it didn't have enough computing power to run ESPHome.
+
+
+HARDWARE NEEDS:
+ - Wemos D1 Mini / $14.98 for 5 (https://www.amazon.com/Organizer-ESP8266-Internet-Development-Compatible/dp/B081PX9YFV/ref=sr_1_3)
+    - Power Source, too (Micro USB-powered)
+ - Magnetic Reed Switch / $10.59 for 10 (https://www.amazon.com/BNYZWOT-Surface-Contact-Sensor-Magnetic/dp/B07VSVZYHW/)
+ - Soldering Iron & Solder
+ - Wire (I have cut into unused ethernet cable and used that--the pairs being twisted together work great)
+ - A *GOOD* Micro USB Cable--one that will do data transfer, not just charging)
+ 
+SOFTWARE INSTRUCTIONS
+   1. Get ESPHome installed and running in HA
+   2. With the Micro USB data cable, plug the Wemos D1 Mini into your PC (mine is a Windows machine. can't speak for Mac or Linux) and hit the "New Device" button. Follow on-screen instructions.
+   3. Device will [should] appear in ESPHome. Click Edit.
+   4. A line or two under "captive_portal:", you can fill in your details for your specific need (in this case: the reed sensor for door/window)
+    here's what my config looked like below "captive_portal:" (the hashtags are to separate out the code):
+#######################
+binary_sensor:
+  - platform: gpio
+    name: D2
+    device_class: door
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+#######################
+      - The "D2" name is just which pin I decided to use. You can honestly name it anything, but that's how it will come into HA. And once it's in HA, you can also changes its name or entity_id.
+      - Device class doesn't really matter because it's a binary_sensor, it's ultimately on or off, but the UI does distinguish it as an open or closed door.
+      - the pin number is the obnoxious one. https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2019/05/ESP8266-WeMos-D1-Mini-pinout-gpio-pin.png. <<< this will tell you the GPIO code for the respective pin you're using. You can only use pins D1 through D8. '
+      - honestly, not quite sure on the "mode", so I just run with it since it has never lead me wrong with "INPUT_PULLUP"
+   5. Finish up, and HA should discover the new ESPHome device pretty quickly, and there you'll see however you labeled your pins. I don't remember for the first time if I had to add the ESPHome integration or if it was auto-discovered. But additional devices later on have always quickly auto-discovered.
+
+HARDWARE INSTRUCTIONS:
+You can theoretically put upto 8 reed switches on one Wemos D1 Mini and monitor 8 doors/windows/whatevers. The reed switch needs to connect the desired pin (D1 through D8) to the G (Ground). If you have multiple sensors, you'll have multiple wires going into the ground--this is where some handywork will need to come in.
+   1. Prepare a desired length of wire to connect the Wemos D1 Mini to the reed switch (make sure the Wemos is near an outliet and in a safe place--no it isn't electrically unsafe, but it can easily short itself out. A dab of hot glue and piece of cardboard is handy in a pinch)
+   2. MAKE SURE the wired side of the reed switch is on the door frame (because I did this in reverse my first time not thinking), and the stand-alone magnet is on the moving piece. Some of these come with double-sided adhesive foam--which has worked well for me.
+
+aaannd, that should do it! 
+
+Bonus project: build a sensor to detect if your dumb deadbolt is locked:
+ - Momentary Push Button (https://www.amazon.com/TWTADE-Yellow-Orange-6x6x5mm-Tactile/dp/B07C7211PJ)
+ - A little spring--like the size that would hold in an AA battery
+ - Lots of patience
+Connect the spring to the button, and get that inside the door jamb deadbold bore hole (I had to drill mine a bit deeper to accomodate). Find a way to get the wires from the button out and to your Wemos, and solder one to an open D-Pin and the other to Ground. 
+
+Here's my full config for one of my doors. It has two reed sensors (glass door, screen door) and one lock as described above: https://github.com/smibrandon/HA/blob/main/wemos-esphome-bk_door
+
+Good luck!
