@@ -1,0 +1,19 @@
+alias: Failed HTTP login attempt notification auto-dismiss (127.0.0.1)
+trigger:
+  - platform: state
+    entity_id: persistent_notification.http_login
+condition:
+  - condition: and
+    conditions:
+      - condition: template
+        value_template: "{{ trigger.to_state.state != 'None' }}"
+      - condition: or
+        conditions:
+          - condition: template
+            value_template: >-
+              {{ "127.0.0.1" in
+              states.persistent_notification.http_login.attributes.message }}
+action:
+  - service: persistent_notification.dismiss
+    data:
+      notification_id: http_login
