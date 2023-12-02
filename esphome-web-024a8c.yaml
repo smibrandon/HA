@@ -1,5 +1,9 @@
-# NOTE: Instances of "[[hidden]]" are hiding sensitive strings of code/data in this instance only; respective code remains in tact in the production YAML file.
+# 
+#       NOTE:
+# Instances of "[[hidden]]" are hiding sensitive strings of code/data in this instance only; respective code remains in tact in the production YAML file.
+# 
 
+# Production YAML starts here:
 esphome:
   name: esphome-web-024a8c
   friendly_name: wemos-esp-car_automation
